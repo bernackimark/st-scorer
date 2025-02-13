@@ -36,9 +36,9 @@ def st_score_pad():
 
     col_a, col_b, col_c = st.columns([4, 1, 1], vertical_alignment='bottom')
     col_a.header(f'{st.session_state.model.name} up to {st.session_state.model.game_over_score}')
-    if col_b.button('\+ Player'):
+    if col_b.button('➕'):
         add_player()
-    if col_c.button('\- Player'):
+    if col_c.button('➖'):
         remove_player()
 
     # TODO: shouldn't the ledger include Nones?  without it, it won't know how to address missed rounds for mid-game joiners
