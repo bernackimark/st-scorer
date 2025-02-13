@@ -1,7 +1,6 @@
 from scorer.models import GameLibrary
 from st_score_pad import st_score_pad
 import streamlit as st
-import testing1
 
 
 # Initialize session state variables
@@ -30,12 +29,13 @@ if st.session_state.model is not None and not st.session_state.has_game_started:
                 st.warning('Please enter a name')
             else:
                 st.session_state.model.add_player(player_name)
-                st.write(f"Added players: {' '.join(st.session_state.model.player_names)}")
+                st.write(f"Added players: {', '.join(st.session_state.model.player_names)}")
 
         btn_done_adding = col_c.form_submit_button("▶️", disabled=not bool(len(st.session_state.model.players)),
                                                    use_container_width=True)
         if btn_done_adding:
             st.session_state.has_game_started = True
+            # TODO: save to db if doing a shareable game else use st session date
             st.rerun()
 
 if st.session_state.has_game_started:
