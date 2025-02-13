@@ -1,6 +1,5 @@
 BASE_URL = 'https://st-scorer.streamlit.io'
 
-
 ADJECTIVES = (
     "bright", "clever", "gentle", "jolly", "brave", "quirky", "sunny", "zesty",
     "mellow", "bouncy", "cranky", "eager", "glossy", "hushed",
