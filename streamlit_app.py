@@ -1,6 +1,7 @@
 from scorer.models import GameLibrary
 from st_score_pad import st_score_pad
 import streamlit as st
+import testing1
 
 
 # Initialize session state variables
@@ -21,9 +22,9 @@ if not st.session_state.model and not st.session_state.has_game_started:
 if st.session_state.model is not None and not st.session_state.has_game_started:
     st.header('Welcome to Scorer')
     with st.form('Add Players', border=True, clear_on_submit=True):
-        col_a, col_b, col_c = st.columns([4, 1, 1], vertical_alignment='bottom')
+        col_a, col_b, col_c = st.columns([4, 1, 1], vertical_alignment='bottom', gap='small')
         player_name = col_a.text_input('Choose a player name: ')
-        btn_add_player = col_b.form_submit_button('Add')
+        btn_add_player = col_b.form_submit_button('➕', use_container_width=True)
         if btn_add_player:
             if not len(player_name.strip()):
                 st.warning('Please enter a name')
@@ -31,7 +32,8 @@ if st.session_state.model is not None and not st.session_state.has_game_started:
                 st.session_state.model.add_player(player_name)
                 st.write(f"Added players: {' '.join(st.session_state.model.player_names)}")
 
-        btn_done_adding = col_c.form_submit_button("Play!", disabled=not bool(len(st.session_state.model.players)))
+        btn_done_adding = col_c.form_submit_button("▶️", disabled=not bool(len(st.session_state.model.players)),
+                                                   use_container_width=True)
         if btn_done_adding:
             st.session_state.has_game_started = True
             st.rerun()
