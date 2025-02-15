@@ -12,10 +12,6 @@ def add_player() -> None:
             return
         try:
             st.session_state.model.add_player(player_name)
-            # pd.Dataframe requires a 0 for every row of an existing table ?
-            # most_recently_added_player_idx = len(st.session_state.model.players)-1
-            # for _ in range(len(st.session_state.data)):
-            #     st.session_state.model.add_score(most_recently_added_player_idx, 0)
             st.rerun()
         except ValueError as e:  # should throw if someone in the game already has that name
             st.error(e)
@@ -31,6 +27,7 @@ def remove_player() -> None:
             st.error(e)
 
 def st_score_pad():
+    # TODO: pull player_ledger_dict from db
     print(f'{st.session_state.model.players = }')
     print(f'{st.session_state.model.player_ledger_dict = }')
 
@@ -40,9 +37,6 @@ def st_score_pad():
         add_player()
     if col_c.button('➖'):
         remove_player()
-
-    # TODO: shouldn't the ledger include Nones?  without it, it won't know how to address missed rounds for mid-game joiners
-
 
     # Allow users to edit and add rows. cell input must be integers or None
     edited_data = st.data_editor(st.session_state.model.player_ledger_dict,
@@ -58,21 +52,20 @@ def st_score_pad():
 
     # if the data has been updated, add/remove any new/removed players & update ledgers
     if edited_data != st.session_state.model.player_ledger_dict:
-        print('xxx', edited_data)
+        # print('xxx', edited_data)
         [st.session_state.model.add_player(name) for name in edited_data if name not in st.session_state.model.player_names]
         [st.session_state.model.remove_player(name) for name in st.session_state.model.player_names if name not in edited_data]
         for p in st.session_state.model.players:
             p.ledger = edited_data.get(p.name)
-        print('yyy', st.session_state.model.players)
+        # print('yyy', st.session_state.model.players)
+        # TODO: write player_ledger_dict to db
         st.rerun()  # Refresh UI to maintain read-only total row
 
     # Create a layout for displaying progress bars in columns
     progress_columns = st.columns(len(st.session_state.model.players))
-    # print(st.session_state.model.players)
 
-    # Show progress bars for each column
+    # Show progress bars for each column, st.progress() value must be 0 <= value <= 100
     for i, (player_name, total_score) in enumerate(st.session_state.model.player_current_scores.items()):
-        # st.progress() value must be: 0 <= value <= 100
         progress_percent = total_score / st.session_state.model.game_over_score
         progress_percent_clamped = 0 if progress_percent < 0 else 1 if progress_percent > 1 else progress_percent
         progress = int(progress_percent_clamped * 100)
@@ -82,6 +75,5 @@ def st_score_pad():
 
     if st.session_state.model.is_game_over:
         winner_name, winner_score = st.session_state.model.winner_name_and_score
-        # st.write(st.session_state.data)
         st.write(f'{winner_name} won with {int(winner_score)} {"point" if winner_score == 1 else "points"}')
         st.balloons()
